@@ -22,6 +22,7 @@ export default function UserMenu() {
         <span className="text-sm font-medium">{user.name}</span>
         <span>▾</span>
       </button>
+      
 
       <div className="absolute right-0 mt-2 w-44 bg-background border rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition">
         <button
@@ -30,6 +31,23 @@ export default function UserMenu() {
         >
           Dashboard
         </button>
+
+        <button
+  onClick={() => router.push(`/${locale}/profile`)}
+  className="w-full text-left px-4 py-2 text-sm hover:bg-muted"
+>
+  My Profile
+</button>
+
+{user?.username && (
+  <button
+    onClick={() => router.push(`/${locale}/u/${user.username}`)}
+    className="w-full text-left px-4 py-2 text-sm hover:bg-muted"
+  >
+    View Public Profile
+  </button>
+)}
+
 
         <button
           onClick={handleLogout}

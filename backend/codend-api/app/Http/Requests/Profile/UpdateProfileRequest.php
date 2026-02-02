@@ -22,13 +22,11 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-              'bio' => 'nullable|string|max:500',
+            'bio' => 'nullable|string|max:500',
             'field' => 'nullable|string|max:100',
-
             'github_url' => 'nullable|url',
             'linkedin_url' => 'nullable|url',
             'portfolio_url' => 'nullable|url',
-
             'avatar' => 'nullable|image|max:2048',
         ];
     }

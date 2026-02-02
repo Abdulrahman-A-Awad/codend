@@ -6,6 +6,7 @@ import { me } from '@/lib/auth';
 type AuthUser = {
   id: number;
   name: string;
+  username: string;
   email: string;
   roles: string[];
   is_admin: boolean;

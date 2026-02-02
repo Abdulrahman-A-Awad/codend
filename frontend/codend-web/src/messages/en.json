@@ -25,5 +25,13 @@
     "button": "Create Account",
     "haveAccount": "Already have an account?",
     "login": "Login"
+  },
+  "profile": {
+    "title": "Profile",
+    "edit": "Edit Profile",
+    "bio": "About you",
+    "field": "Field / Specialty",
+    "save": "Save changes"
   }
 }
+

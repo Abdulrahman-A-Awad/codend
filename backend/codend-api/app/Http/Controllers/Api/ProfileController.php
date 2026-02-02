@@ -44,17 +44,18 @@ class ProfileController extends Controller
         ]);
     }
 
-    // 🌍 Public Profile
-    public function show(string $username)
-    {
-        $user = User::where('username', $username)
-            ->with('profile')
-            ->firstOrFail();
+ // 🌍 Public Profile
+public function show(string $username)
+{
+    $user = User::where('username', $username)->firstOrFail();
 
-        return response()->json([
-            'name' => $user->name,
-            'username' => $user->username,
-            'profile' => $user->profile,
-        ]);
-    }
+    // Create empty profile if not exists
+    $profile = $user->profile()->firstOrCreate([]);
+
+    return response()->json([
+        'name' => $user->name,
+        'username' => $user->username,
+        'profile' => $profile,
+    ]);
+}
 }

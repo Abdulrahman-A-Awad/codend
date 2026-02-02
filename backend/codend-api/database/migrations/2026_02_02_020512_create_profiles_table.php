@@ -17,15 +17,12 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
-
             $table->string('avatar')->nullable();
             $table->text('bio')->nullable();
             $table->string('field')->nullable();
-
             $table->string('github_url')->nullable();
             $table->string('linkedin_url')->nullable();
             $table->string('portfolio_url')->nullable();
-
             $table->timestamps();
         });
     }

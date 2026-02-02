@@ -50,6 +50,7 @@ class AuthController extends Controller
     return response()->json([
         'id' => $user->id,
         'name' => $user->name,
+        'username' => $user->username,
         'email' => $user->email,
         'roles' => $user->getRoleNames(), // collection
         'is_admin' => $user->hasRole('admin'),
