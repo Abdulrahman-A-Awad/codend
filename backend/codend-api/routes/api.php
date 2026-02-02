@@ -35,9 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile/me', [ProfileController::class, 'me']);
     Route::post('/profile', [ProfileController::class, 'update']);
 
-    // ⚙️ Account (name, password لاحقًا)
+    // ⚙️ Account (name, password )
     Route::prefix('account')->group(function () {
-        Route::post('/name', [AccountController::class, 'updateName']);
-        // Route::post('/password', [AccountController::class, 'updatePassword']); ← بعد شوية
+    Route::post('/name', [AccountController::class, 'updateName']);
+    Route::post('/password', [AccountController::class, 'updatePassword']);
     });
 });

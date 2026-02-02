@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Account\UpdateNameRequest;
+use App\Http\Requests\Account\UpdatePasswordRequest;
+use Illuminate\Support\Facades\Hash;
 
 class AccountController extends Controller
 {
@@ -24,4 +26,21 @@ class AccountController extends Controller
             'user' => $user,
         ]);
     }
+
+ /**
+     * Update account Password
+     */
+
+public function updatePassword(UpdatePasswordRequest $request)
+{
+    $user = $request->user();
+
+    $user->update([
+        'password' => Hash::make($request->new_password),
+    ]);
+
+    return response()->json([
+        'message' => 'Password updated successfully',
+    ]);
+}
 }

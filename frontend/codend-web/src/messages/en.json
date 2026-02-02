@@ -26,16 +26,22 @@
     "haveAccount": "Already have an account?",
     "login": "Login"
   },
-  "profile": {
+ "profile": {
     "edit": "Edit Profile",
     "bio": "About you",
-    "field": "Field / Specialty",
+    "field": "Field / Specialization",
     "save": "Save changes"
   },
+
   "account": {
     "title": "Account Settings",
     "name": "Name",
-    "save": "Save Changes"
+    "current_password": "Current password",
+    "new_password": "New password",
+    "confirm_password": "Confirm password",
+    "save": "Save changes",
+    "password_success": "Password updated successfully",
+    "password_error": "Failed to update password"
   }
 }
 
