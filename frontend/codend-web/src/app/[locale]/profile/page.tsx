@@ -6,68 +6,71 @@ import { getMyProfile, updateProfile } from '@/lib/profile';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-
 export default function MyProfilePage() {
   const t = useTranslations('profile');
 
   const [profile, setProfile] = useState<any>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   const router = useRouter();
-const pathname = usePathname();
-const locale = pathname.split('/')[1];
+  const pathname = usePathname();
+  const locale = pathname.split('/')[1];
 
-const { user, refreshUser } = useAuth();
-const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-
+  const { user, refreshUser } = useAuth();
 
   useEffect(() => {
-  getMyProfile().then((res) => {
-    setProfile(res.profile);
+    getMyProfile().then((res) => {
+      setProfile(res.profile);
 
-    if (res.profile.avatar) {
-      setAvatarPreview(
-        `${process.env.NEXT_PUBLIC_API_URL}/storage/${res.profile.avatar}`
-      );
-    }
+      if (res.profile.avatar) {
+        setAvatarPreview(
+          `${process.env.NEXT_PUBLIC_API_URL}/storage/${res.profile.avatar}`
+        );
+      }
 
-    setLoading(false);
-  });
-}, []);
+      setLoading(false);
+    });
+  }, []);
 
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   }
 
-async function handleSubmit(e: React.FormEvent) {
-  e.preventDefault();
-  setSaving(true);
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    Object.entries(profile).forEach(([key, value]) => {
-      if (value instanceof File) {
-        // 👈 للصور
-        formData.append(key, value);
-      } else {
-        // 👈 لباقي الحقول النصية
-        formData.append(key, value ? String(value) : '');
+      ['bio', 'field', 'github_url', 'linkedin_url', 'portfolio_url'].forEach(
+        (key) => {
+          if (profile?.[key]) {
+            formData.append(key, profile[key]);
+          }
+        }
+      );
+
+      if (profile?.avatar instanceof File) {
+        formData.append('avatar', profile.avatar);
       }
-    });
 
-    await updateProfile(formData);
-    await refreshUser(); // 👈 ده السطر السحري
+      if (profile?.avatar === null) {
+        formData.append('avatar', '');
+      }
 
-    if (user?.username) {
-      router.push(`/${locale}/u/${user.username}`);
+      await updateProfile(formData);
+      await refreshUser();
+
+      router.push(`/${locale}/u/${user?.username}`);
+    } finally {
+      setSaving(false);
     }
-  } finally {
-    setSaving(false);
   }
-}
 
   if (loading) return <p className="p-6">Loading...</p>;
 
@@ -75,57 +78,50 @@ async function handleSubmit(e: React.FormEvent) {
     <div className="max-w-3xl mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-bold">{t('edit')}</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-             {/* Image */}
-<div className="flex items-center gap-6">
-  {/* Avatar preview */}
-  <div className="w-24 h-24 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
-    {avatarPreview ? (
-      <img
-        src={avatarPreview}
-        alt="Avatar Preview"
-        className="w-full h-full object-cover"
-      />
-    ) : (
-      <span className="text-xl font-semibold text-gray-500">
-        {user?.name?.charAt(0)}
-      </span>
-    )}
-  </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Avatar */}
+        <div className="flex items-center gap-6">
+          <div className="w-24 h-24 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
+            {avatarPreview ? (
+              <img src={avatarPreview} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-xl font-semibold text-gray-500">
+                {user?.name?.charAt(0)}
+              </span>
+            )}
+          </div>
 
-  <div className="flex flex-col gap-2 text-sm">
-    {/* Upload */}
-    <label className="cursor-pointer text-indigo-600 hover:underline">
-      Change photo
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (!file) return;
+          <div className="flex flex-col gap-2 text-sm">
+            <label className="cursor-pointer text-indigo-600 hover:underline">
+              Change photo
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
 
-          setProfile({ ...profile, avatar: file });
-          setAvatarPreview(URL.createObjectURL(file));
-        }}
-      />
-    </label>
+                  setProfile({ ...profile, avatar: file });
+                  setAvatarPreview(URL.createObjectURL(file));
+                }}
+              />
+            </label>
 
-    {/* Remove */}
-    {avatarPreview && (
-      <button
-        type="button"
-        onClick={() => {
-          setProfile({ ...profile, avatar: null });
-          setAvatarPreview(null);
-        }}
-        className="text-red-500 hover:underline text-left"
-      >
-        Remove photo
-      </button>
-    )}
-  </div>
-</div>
+            {avatarPreview && (
+              <button
+                type="button"
+                onClick={() => {
+                  setProfile({ ...profile, avatar: null });
+                  setAvatarPreview(null);
+                }}
+                className="text-red-500 hover:underline text-left"
+              >
+                Remove photo
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* Bio */}
         <textarea

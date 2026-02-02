@@ -23,8 +23,6 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'avatar',
-        'bio',
         'preferred_language',
     ];
     public function profile()

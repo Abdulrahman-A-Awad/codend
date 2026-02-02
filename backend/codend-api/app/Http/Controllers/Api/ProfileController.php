@@ -8,10 +8,9 @@ use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
-
 class ProfileController extends Controller
 {
-    // 🔐 My Profile
+    // 🔐 Get my profile (private)
     public function me(Request $request)
     {
         $user = $request->user();
@@ -24,63 +23,62 @@ class ProfileController extends Controller
         ]);
     }
 
-    // ✏️ Update My Profile
-public function update(UpdateProfileRequest $request)
-{
-    $user = $request->user();
-    $profile = $user->profile()->firstOrCreate([]);
+    // ✏️ Update my profile (avatar, bio, field, links)
+    public function update(UpdateProfileRequest $request)
+    {
+        $user = $request->user();
+        $profile = $user->profile()->firstOrCreate([]);
 
-    $data = $request->validated();
+        $data = $request->validated();
 
-    /*
-    |--------------------------------------------------------------------------
-    | 🗑 Remove avatar
-    |--------------------------------------------------------------------------
-    | لو الفرونت بعت avatar = null
-    */
-    if ($request->has('avatar') && $request->input('avatar') === null) {
-        if ($profile->avatar) {
-            Storage::disk('public')->delete($profile->avatar);
+        /*
+        |--------------------------------------------------------------------------
+        | 🗑 Remove avatar
+        |--------------------------------------------------------------------------
+        | لو الفرونت بعت avatar = null
+        */
+        if ($request->has('avatar') && $request->input('avatar') === null) {
+            if ($profile->avatar) {
+                Storage::disk('public')->delete($profile->avatar);
+            }
+
+            $data['avatar'] = null;
         }
 
-        $data['avatar'] = null;
-    }
+        /*
+        |--------------------------------------------------------------------------
+        | 📤 Upload new avatar
+        |--------------------------------------------------------------------------
+        */
+        if ($request->hasFile('avatar')) {
+            // احذف القديم
+            if ($profile->avatar) {
+                Storage::disk('public')->delete($profile->avatar);
+            }
 
-    /*
-    |--------------------------------------------------------------------------
-    | 📤 Upload new avatar
-    |--------------------------------------------------------------------------
-    */
-    if ($request->hasFile('avatar')) {
-        // احذف القديم
-        if ($profile->avatar) {
-            Storage::disk('public')->delete($profile->avatar);
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $data['avatar'] = $path;
         }
 
-        $path = $request->file('avatar')->store('avatars', 'public');
-        $data['avatar'] = $path;
+        $profile->update($data);
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'profile' => $profile,
+        ]);
     }
 
-    $profile->update($data);
+    // 🌍 Public profile (by username)
+    public function show(string $username)
+    {
+        $user = User::where('username', $username)->firstOrFail();
 
-    return response()->json([
-        'message' => 'Profile updated successfully',
-        'profile' => $profile,
-    ]);
-}
+        $profile = $user->profile()->firstOrCreate([]);
 
- // 🌍 Public Profile
-public function show(string $username)
-{
-    $user = User::where('username', $username)->firstOrFail();
-
-    // Create empty profile if not exists
-    $profile = $user->profile()->firstOrCreate([]);
-
-    return response()->json([
-        'name' => $user->name,
-        'username' => $user->username,
-        'profile' => $profile,
-    ]);
-}
+        return response()->json([
+            'name' => $user->name,
+            'username' => $user->username,
+            'profile' => $profile,
+        ]);
+    }
 }

@@ -71,6 +71,13 @@ export default function UserMenu() {
           )}
 
           <button
+  onClick={() => router.push(`/${locale}/account`)}
+  className="w-full text-left px-4 py-2 text-sm hover:bg-muted"
+>
+  Account Settings
+</button>
+
+          <button
             onClick={() => router.push(`/${locale}/dashboard`)}
             className="w-full text-left px-4 py-2 text-sm hover:bg-muted"
           >

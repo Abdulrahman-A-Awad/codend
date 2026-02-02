@@ -27,11 +27,15 @@
     "login": "Login"
   },
   "profile": {
-    "title": "Profile",
     "edit": "Edit Profile",
     "bio": "About you",
     "field": "Field / Specialty",
     "save": "Save changes"
+  },
+  "account": {
+    "title": "Account Settings",
+    "name": "Name",
+    "save": "Save Changes"
   }
 }
 
