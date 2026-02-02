@@ -1,27 +1,26 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
-export default function GuestGuard({
+export default function AdminGuard({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const locale = pathname.split('/')[1];
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-
-    // اشتغل بس على صفحات auth
-    const isAuthPage = pathname.includes('/auth/');
-
-    if (token && isAuthPage) {
+    if (!loading && (!user || !user.is_admin)) {
       router.replace(`/${locale}/dashboard`);
     }
-  }, [pathname, locale, router]);
+  }, [user, loading, locale, router]);
+
+  if (loading) return null;
 
   return <>{children}</>;
 }

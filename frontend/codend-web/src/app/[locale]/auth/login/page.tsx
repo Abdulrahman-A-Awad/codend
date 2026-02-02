@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { login } from '@/lib/auth';
+import { useAuth } from '@/context/AuthContext';
+
 
 export default function LoginPage() {
   const t = useTranslations('auth');
@@ -17,26 +19,32 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { refreshUser } = useAuth();
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+ async function handleSubmit(e: React.FormEvent) {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    try {
-      const data = await login(loginValue, password);
-      localStorage.setItem('token', data.token);
-      router.push(`/${locale}/dashboard`);
-    } catch {
-      setError(
-        locale === 'ar'
-          ? 'بيانات الدخول غير صحيحة'
-          : 'Invalid login credentials'
-      );
-    } finally {
-      setLoading(false);
-    }
+  try {
+    const data = await login(loginValue, password);
+    localStorage.setItem('token', data.token);
+
+    // 🔥 المهم
+    await refreshUser();
+
+    router.push(`/${locale}/dashboard`);
+  } catch {
+    setError(
+      locale === 'ar'
+        ? 'بيانات الدخول غير صحيحة'
+        : 'Invalid login credentials'
+    );
+  } finally {
+    setLoading(false);
   }
+}
+
 
   return (
     <div className="w-full max-w-md space-y-6">

@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation';
 
 export default function LanguageToggle() {
   const pathname = usePathname();
-
   const isArabic = pathname.startsWith('/ar');
+
   const newPath = isArabic
     ? pathname.replace('/ar', '/en')
     : pathname.replace('/en', '/ar');
@@ -13,9 +13,9 @@ export default function LanguageToggle() {
   return (
     <a
       href={newPath}
-      className="text-sm font-medium hover:underline"
+      className="text-sm hover:underline"
     >
-      {isArabic ? 'English' : 'عربي'}
+      {isArabic ? 'EN' : 'عربي'}
     </a>
   );
 }

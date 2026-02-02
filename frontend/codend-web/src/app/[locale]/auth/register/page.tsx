@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { register } from '@/lib/auth';
+import { useAuth } from '@/context/AuthContext';
+
 
 export default function RegisterPage() {
   const t = useTranslations('register');
@@ -23,31 +25,36 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { refreshUser } = useAuth();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+async function handleSubmit(e: React.FormEvent) {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    try {
-      const data = await register(form);
-      localStorage.setItem('token', data.token);
-      router.push(`/${locale}/dashboard`);
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.message ||
-          (locale === 'ar'
-            ? 'تحقق من البيانات المدخلة'
-            : 'Please check your input')
-      );
-    } finally {
-      setLoading(false);
-    }
+  try {
+    const data = await register(form);
+    localStorage.setItem('token', data.token);
+
+    // 🔥 المهم
+    await refreshUser();
+
+    router.push(`/${locale}/dashboard`);
+  } catch (err: any) {
+    setError(
+      err?.response?.data?.message ||
+        (locale === 'ar'
+          ? 'تحقق من البيانات المدخلة'
+          : 'Please check your input')
+    );
+  } finally {
+    setLoading(false);
   }
+}
 
   return (
     <div className="w-full max-w-md space-y-6">
