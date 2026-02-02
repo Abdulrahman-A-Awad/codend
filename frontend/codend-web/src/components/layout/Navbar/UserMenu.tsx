@@ -11,18 +11,19 @@ export default function UserMenu() {
 
   if (!user) return null;
 
+  const avatarUrl =
+    (user as any)?.profile?.avatar
+      ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${(user as any).profile.avatar}`
+      : null;
+
   function handleLogout() {
     logout();
     router.replace(`/${locale}/auth/login`);
   }
 
-  const avatarUrl = user.profile?.avatar
-    ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${user.profile.avatar}`
-    : null;
-
   return (
     <div className="relative group">
-      {/* Avatar Button */}
+      {/* Avatar */}
       <button className="w-9 h-9 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
         {avatarUrl ? (
           <img
@@ -38,11 +39,17 @@ export default function UserMenu() {
       </button>
 
       {/* Dropdown */}
-      <div className="absolute right-0 mt-3 w-56 bg-background border rounded-xl shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition">
-        {/* User info */}
+      <div className="absolute right-0 mt-3 w-56 bg-background border rounded-xl shadow-lg
+        opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition">
+
+        {/* User Info */}
         <div className="px-4 py-3 border-b">
           <p className="text-sm font-medium">{user.name}</p>
-          <p className="text-xs text-muted-foreground">@{user.username}</p>
+          {user.username && (
+            <p className="text-xs text-muted-foreground">
+              @{user.username}
+            </p>
+          )}
         </div>
 
         {/* Actions */}
@@ -54,12 +61,14 @@ export default function UserMenu() {
             Edit Profile
           </button>
 
-          <button
-            onClick={() => router.push(`/${locale}/u/${user.username}`)}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-muted"
-          >
-            View Public Profile
-          </button>
+          {user.username && (
+            <button
+              onClick={() => router.push(`/${locale}/u/${user.username}`)}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-muted"
+            >
+              View Public Profile
+            </button>
+          )}
 
           <button
             onClick={() => router.push(`/${locale}/dashboard`)}
