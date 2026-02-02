@@ -11,7 +11,7 @@ export default function Navbar() {
   const locale = pathname.split('/')[1];
   const { user, loading } = useAuth();
 
-  if (loading) return null; // مهم
+  if (loading) return null;
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background">
@@ -24,7 +24,6 @@ export default function Navbar() {
 
         {/* Right */}
         <div className="flex items-center gap-4">
-          {/* Guest */}
           {!user && (
             <>
               <Link
@@ -42,22 +41,8 @@ export default function Navbar() {
             </>
           )}
 
-          {/* User */}
-         
-
-          {/* Admin */}
-          {/* {user?.is_admin && (
-            <Link
-              href={`/${locale}/admin`}
-              className="text-sm font-semibold text-red-600 hover:underline"
-            >
-              Admin
-            </Link>
-          )} */}
-
           <LanguageToggle />
 
-          {/* User Menu */}
           {user && <UserMenu />}
         </div>
       </div>

@@ -6,6 +6,7 @@ import { getMyProfile, updateProfile } from '@/lib/profile';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
+
 export default function MyProfilePage() {
   const t = useTranslations('profile');
 
@@ -17,8 +18,9 @@ export default function MyProfilePage() {
 const pathname = usePathname();
 const locale = pathname.split('/')[1];
 
-const { user } = useAuth();
+const { user, refreshUser } = useAuth();
 const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
 
   useEffect(() => {
   getMyProfile().then((res) => {
@@ -57,6 +59,7 @@ async function handleSubmit(e: React.FormEvent) {
     });
 
     await updateProfile(formData);
+    await refreshUser(); // 👈 ده السطر السحري
 
     if (user?.username) {
       router.push(`/${locale}/u/${user.username}`);

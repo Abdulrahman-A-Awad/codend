@@ -47,14 +47,15 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-    return response()->json([
-        'id' => $user->id,
-        'name' => $user->name,
-        'username' => $user->username,
-        'email' => $user->email,
-        'roles' => $user->getRoleNames(), // collection
-        'is_admin' => $user->hasRole('admin'),
-    ]);
+ return response()->json([
+    'id' => $user->id,
+    'name' => $user->name,
+    'username' => $user->username,
+    'email' => $user->email,
+    'roles' => $user->roles->pluck('name'),
+    'is_admin' => $user->hasRole('admin'),
+    'profile' => $user->profile,
+]);
     }
 
     public function logout(Request $request)

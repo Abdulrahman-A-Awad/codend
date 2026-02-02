@@ -6,10 +6,14 @@ import { me } from '@/lib/auth';
 type AuthUser = {
   id: number;
   name: string;
-  username: string;
   email: string;
+  username: string;
   roles: string[];
   is_admin: boolean;
+
+  profile?: {
+    avatar?: string | null;
+  };
 };
 
 type AuthContextType = {
@@ -25,33 +29,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  async function loadUser() {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      setUser(null);
-      setLoading(false);
-      return;
-    }
-
+  async function fetchUser() {
     try {
       const data = await me();
       setUser(data);
     } catch {
       localStorage.removeItem('token');
       setUser(null);
-    } finally {
-      setLoading(false);
     }
   }
 
   useEffect(() => {
-    loadUser();
-  }, []);
+    const token = localStorage.getItem('token');
 
-  async function refreshUser() {
-    await loadUser();
-  }
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    fetchUser().finally(() => setLoading(false));
+  }, []);
 
   function logout() {
     localStorage.removeItem('token');
@@ -60,7 +57,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, logout, refreshUser }}
+      value={{
+        user,
+        loading,
+        logout,
+        refreshUser: fetchUser, // 👈 المهم
+      }}
     >
       {children}
     </AuthContext.Provider>
