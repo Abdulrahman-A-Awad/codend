@@ -27,6 +27,11 @@ class User extends Authenticatable
         'bio',
         'preferred_language',
     ];
+    public function profile()
+{
+    return $this->hasOne(Profile::class);
+}
+
 
     /**
      * The attributes that should be hidden for serialization.
