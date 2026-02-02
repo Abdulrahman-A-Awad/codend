@@ -1,0 +1,29 @@
+{
+  "authLayout": {
+    "title": "Code & Design",
+    "subtitle": "An interactive learning platform for computer science and programming"
+  },
+
+  "auth": {
+    "loginTitle": "Login",
+    "loginSubtitle": "Access your account",
+    "loginButton": "Login",
+    "noAccount": "Don't have an account?",
+    "register": "Create account",
+    "loginPlaceholder": "Email or username",
+    "passwordPlaceholder": "Password"
+  },
+
+  "register": {
+    "title": "Create Account",
+    "subtitle": "Start your programming journey",
+    "name": "Full Name",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "button": "Create Account",
+    "haveAccount": "Already have an account?",
+    "login": "Login"
+  }
+}
