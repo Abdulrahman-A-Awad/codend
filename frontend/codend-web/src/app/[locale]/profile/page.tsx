@@ -73,8 +73,8 @@ async function handleSubmit(e: React.FormEvent) {
       <h1 className="text-2xl font-bold">{t('edit')}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Image */}
-        <div className="flex items-center gap-4">
+             {/* Image */}
+<div className="flex items-center gap-6">
   {/* Avatar preview */}
   <div className="w-24 h-24 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
     {avatarPreview ? (
@@ -90,23 +90,40 @@ async function handleSubmit(e: React.FormEvent) {
     )}
   </div>
 
-  {/* Upload button */}
-  <label className="cursor-pointer text-sm text-indigo-600 hover:underline">
-    Change photo
-    <input
-      type="file"
-      accept="image/*"
-      className="hidden"
-      onChange={(e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+  <div className="flex flex-col gap-2 text-sm">
+    {/* Upload */}
+    <label className="cursor-pointer text-indigo-600 hover:underline">
+      Change photo
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
 
-        setProfile({ ...profile, avatar: file });
-        setAvatarPreview(URL.createObjectURL(file));
-      }}
-    />
-  </label>
+          setProfile({ ...profile, avatar: file });
+          setAvatarPreview(URL.createObjectURL(file));
+        }}
+      />
+    </label>
+
+    {/* Remove */}
+    {avatarPreview && (
+      <button
+        type="button"
+        onClick={() => {
+          setProfile({ ...profile, avatar: null });
+          setAvatarPreview(null);
+        }}
+        className="text-red-500 hover:underline text-left"
+      >
+        Remove photo
+      </button>
+    )}
+  </div>
 </div>
+
         {/* Bio */}
         <textarea
           name="bio"
