@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { getMyProfile, updateProfile } from '@/lib/profile';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function MyProfilePage() {
   const t = useTranslations('profile');
@@ -20,6 +21,9 @@ export default function MyProfilePage() {
 
   const { user, refreshUser } = useAuth();
 
+  /* =======================
+     Load profile
+  ======================= */
   useEffect(() => {
     getMyProfile().then((res) => {
       setProfile(res.profile);
@@ -34,12 +38,18 @@ export default function MyProfilePage() {
     });
   }, []);
 
+  /* =======================
+     Handle input change
+  ======================= */
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   }
 
+  /* =======================
+     Submit
+  ======================= */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
@@ -47,26 +57,55 @@ export default function MyProfilePage() {
     try {
       const formData = new FormData();
 
-      ['bio', 'field', 'github_url', 'linkedin_url', 'portfolio_url'].forEach(
-        (key) => {
-          if (profile?.[key]) {
-            formData.append(key, profile[key]);
-          }
-        }
-      );
+      // Text fields
+      if (profile.bio !== undefined) {
+        formData.append('bio', profile.bio ?? '');
+      }
 
-      if (profile?.avatar instanceof File) {
+      if (profile.field !== undefined) {
+        formData.append('field', profile.field ?? '');
+      }
+
+      if (profile.github_url) {
+        formData.append('github_url', profile.github_url);
+      }
+
+      if (profile.linkedin_url) {
+        formData.append('linkedin_url', profile.linkedin_url);
+      }
+
+      if (profile.portfolio_url) {
+        formData.append('portfolio_url', profile.portfolio_url);
+      }
+
+      // Avatar upload
+      if (profile.avatar instanceof File) {
         formData.append('avatar', profile.avatar);
       }
 
-      if (profile?.avatar === null) {
-        formData.append('avatar', '');
+      // Remove avatar
+      if (profile.avatar === null) {
+        formData.append('remove_avatar', '1');
       }
 
       await updateProfile(formData);
       await refreshUser();
 
-      router.push(`/${locale}/u/${user?.username}`);
+      toast.success(
+        locale === 'ar'
+          ? 'تم حفظ الملف الشخصي بنجاح'
+          : 'Profile updated successfully'
+      );
+
+      if (user?.username) {
+        router.push(`/${locale}/u/${user.username}`);
+      }
+    } catch {
+      toast.error(
+        locale === 'ar'
+          ? 'حدث خطأ أثناء حفظ الملف الشخصي'
+          : 'Failed to update profile'
+      );
     } finally {
       setSaving(false);
     }
@@ -83,7 +122,11 @@ export default function MyProfilePage() {
         <div className="flex items-center gap-6">
           <div className="w-24 h-24 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
             {avatarPreview ? (
-              <img src={avatarPreview} className="w-full h-full object-cover" />
+              <img
+                src={avatarPreview}
+                className="w-full h-full object-cover"
+                alt="Avatar"
+              />
             ) : (
               <span className="text-xl font-semibold text-gray-500">
                 {user?.name?.charAt(0)}

@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\Account\UpdateNameRequest;
 use App\Http\Requests\Account\UpdatePasswordRequest;
-use Illuminate\Support\Facades\Hash;
 
 class AccountController extends Controller
 {
@@ -27,20 +25,20 @@ class AccountController extends Controller
         ]);
     }
 
- /**
-     * Update account Password
+    /**
+     * Update account password
      */
+    public function updatePassword(UpdatePasswordRequest $request)
+    {
+        $user = $request->user();
 
-public function updatePassword(UpdatePasswordRequest $request)
-{
-    $user = $request->user();
+        // ❌ لا Hash::make هنا
+        $user->update([
+            'password' => $request->password,
+        ]);
 
-    $user->update([
-        'password' => Hash::make($request->new_password),
-    ]);
-
-    return response()->json([
-        'message' => 'Password updated successfully',
-    ]);
-}
+        return response()->json([
+            'message' => 'Password updated successfully',
+        ]);
+    }
 }

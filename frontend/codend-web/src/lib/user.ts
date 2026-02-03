@@ -1,15 +1,20 @@
-// src/lib/user.ts
 import api from './api';
 
+/* =======================
+   Update Name
+======================= */
 export async function updateUserName(name: string) {
   const res = await api.post('/account/name', { name });
   return res.data;
 }
 
+/* =======================
+   Update Password
+======================= */
 export type UpdatePasswordPayload = {
   current_password: string;
-  new_password: string;
-  new_password_confirmation: string;
+  password: string;
+  password_confirmation: string;
 };
 
 export async function updatePassword(

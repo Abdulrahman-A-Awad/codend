@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/context/AuthContext';
 import { updateUserName, updatePassword } from '@/lib/user';
+import toast from 'react-hot-toast';
 
 export default function AccountPage() {
   const t = useTranslations('account');
@@ -21,47 +22,64 @@ export default function AccountPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
 
+  /* =======================
+     Load user name
+  ======================= */
   useEffect(() => {
     if (user?.name) {
       setName(user.name);
     }
   }, [user]);
 
+  /* =======================
+     Submit (ONE button)
+  ======================= */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
 
     try {
       /* =======================
-         Update Name (if changed)
+         Update Name (optional)
       ======================= */
       if (name && name !== user?.name) {
         await updateUserName(name);
-        await refreshUser(); // يحدث الناف بار
+        await refreshUser();
+
+        toast.success(
+          locale === 'ar'
+            ? 'تم تحديث الاسم بنجاح'
+            : 'Name updated successfully'
+        );
       }
 
       /* =======================
-         Update Password (if filled)
+         Update Password (optional)
       ======================= */
       const wantsPasswordChange =
         currentPassword || newPassword || confirmPassword;
 
       if (wantsPasswordChange) {
         if (!currentPassword || !newPassword || !confirmPassword) {
-          setMessage(t('password_error'));
+          toast.error(t('password_error'));
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          toast.error(t('password_error'));
           return;
         }
 
         await updatePassword({
           current_password: currentPassword,
-          new_password: newPassword,
-          new_password_confirmation: confirmPassword,
+          password: newPassword,
+          password_confirmation: confirmPassword,
         });
 
-        // تنظيف الحقول
+        toast.success(t('password_success'));
+
+        // Reset fields
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
@@ -69,7 +87,11 @@ export default function AccountPage() {
 
       router.push(`/${locale}/u/${user?.username}`);
     } catch {
-      setMessage(t('password_error'));
+      toast.error(
+        locale === 'ar'
+          ? 'حدث خطأ أثناء حفظ إعدادات الحساب'
+          : 'Failed to update account settings'
+      );
     } finally {
       setSaving(false);
     }
@@ -138,14 +160,8 @@ export default function AccountPage() {
           </div>
         </div>
 
-        {message && (
-          <p className="text-sm text-center text-red-500">
-            {message}
-          </p>
-        )}
-
         {/* =======================
-            Save Button (ONE)
+            Save Button
         ======================= */}
         <button
           disabled={saving}

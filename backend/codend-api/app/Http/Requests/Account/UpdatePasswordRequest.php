@@ -25,7 +25,7 @@ class UpdatePasswordRequest extends FormRequest
                 },
             ],
 
-            'new_password' => [
+            'password' => [
                 'required',
                 Password::min(8),
                 'confirmed',
