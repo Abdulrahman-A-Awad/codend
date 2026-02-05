@@ -24,6 +24,9 @@ export default async function PublicProfilePage({
         avatar={profile.avatar}
         bio={profile.bio}
         field={profile.field}
+        country={profile.country}
+        university={profile.university}
+        department={profile.department}
         github_url={profile.github_url}
         linkedin_url={profile.linkedin_url}
         portfolio_url={profile.portfolio_url}

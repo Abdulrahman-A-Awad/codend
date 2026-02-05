@@ -30,6 +30,9 @@
     "edit": "Edit Profile",
     "bio": "About you",
     "field": "Field / Specialization",
+    "country": "Country",
+  "university": "University",
+  "department": "Department",
     "save": "Save changes"
   },
 

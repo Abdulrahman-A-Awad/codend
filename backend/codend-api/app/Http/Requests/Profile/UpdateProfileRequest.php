@@ -24,6 +24,9 @@ class UpdateProfileRequest extends FormRequest
         return [
             'bio' => 'nullable|string|max:500',
             'field' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100',
+            'university' => 'nullable|string|max:255',
+            'department' => 'nullable|string|max:255',
             'github_url' => 'nullable|url',
             'linkedin_url' => 'nullable|url',
             'portfolio_url' => 'nullable|url',

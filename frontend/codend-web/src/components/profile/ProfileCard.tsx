@@ -8,6 +8,9 @@ type ProfileCardProps = {
   avatar?: string | null;
   bio?: string | null;
   field?: string | null;
+  country?: string | null;
+  university?: string | null;
+  department?: string | null;
   github_url?: string | null;
   linkedin_url?: string | null;
   portfolio_url?: string | null;
@@ -20,6 +23,9 @@ export default function ProfileCard({
   avatar,
   bio,
   field,
+  country,
+  university,
+  department,
   github_url,
   linkedin_url,
   portfolio_url,
@@ -65,7 +71,23 @@ export default function ProfileCard({
           )}
         </div>
       </div>
+{/* Academic Info */}
+{(country || university) && (
+  <div className="text-sm text-muted-foreground space-y-0.5">
+    {country && (
+      <p>
+        🌍 {country}
+      </p>
+    )}
 
+    {university && (
+      <p>
+        🎓 {university}
+        {department && ` – ${department}`}
+      </p>
+    )}
+  </div>
+)}
       {/* Bio */}
       {bio && (
         <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">

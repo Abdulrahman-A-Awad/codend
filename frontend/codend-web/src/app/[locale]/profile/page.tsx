@@ -66,6 +66,18 @@ export default function MyProfilePage() {
         formData.append('field', profile.field ?? '');
       }
 
+      if (profile.country !== undefined) {
+  formData.append('country', profile.country ?? '');
+}
+
+if (profile.university !== undefined) {
+  formData.append('university', profile.university ?? '');
+}
+
+if (profile.department !== undefined) {
+  formData.append('department', profile.department ?? '');
+}
+
       if (profile.github_url) {
         formData.append('github_url', profile.github_url);
       }
@@ -184,6 +196,33 @@ export default function MyProfilePage() {
           placeholder={t('field')}
           className="w-full p-3 border rounded-lg"
         />
+
+        {/* Country */}
+<input
+  name="country"
+  value={profile.country || ''}
+  onChange={handleChange}
+  placeholder={t('country')}
+  className="w-full p-3 border rounded-lg"
+/>
+
+{/* University */}
+<input
+  name="university"
+  value={profile.university || ''}
+  onChange={handleChange}
+  placeholder={t('university')}
+  className="w-full p-3 border rounded-lg"
+/>
+
+{/* Department */}
+<input
+  name="department"
+  value={profile.department || ''}
+  onChange={handleChange}
+  placeholder={t('department')}
+  className="w-full p-3 border rounded-lg"
+/>
 
         {/* Links */}
         <input
